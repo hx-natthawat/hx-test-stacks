@@ -96,6 +96,7 @@ services:
       - hx-jaroen-stacks
 
   proxy-manager:
+    container_name: proxy-manager
     image: "jc21/nginx-proxy-manager:latest"
     restart: unless-stopped
     ports:
@@ -123,6 +124,7 @@ services:
       - proxy-db
 
   proxy-db:
+    container_name: proxy-db
     image: "jc21/mariadb-aria:latest"
     restart: unless-stopped
     environment:
