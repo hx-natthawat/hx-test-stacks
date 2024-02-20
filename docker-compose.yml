@@ -1,0 +1,137 @@
+version: "3.8"
+
+# define the volumes that will be used by the services
+volumes:
+  extensions:
+  data:
+  snapshots:
+  uploads:
+  cache:
+  database:
+  data.ms:
+
+# define the networks that will be used by the services
+networks:
+  hx-jaroen-stacks:
+
+# define the services that will be used by the application
+services:
+  database:
+    container_name: database
+    # image: postgres:15-alpine
+    image: postgis/postgis:16-3.4
+    volumes:
+      - data:/var/lib/postgresql/data
+    networks:
+      - hx-jaroen-stacks
+    ports:
+      - 5432
+    env_file: .env
+
+  cache:
+    container_name: cache
+    image: redis:7-alpine
+    networks:
+      - hx-jaroen-stacks
+    volumes:
+      - cache:/data
+    ports:
+      - 6379
+    env_file: .env
+
+  # define the custom directus service
+  cms:
+    container_name: directus
+    # build the image from the Dockerfile in the current directory
+    # ---
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # ---
+    ports:
+      - 8055:8055
+    volumes:
+      - extensions:/directus/extensions
+      - snapshots:/directus/snapshots
+      - uploads:/directus/uploads
+      - database:/directus/database
+    networks:
+      - hx-jaroen-stacks
+    depends_on:
+      - cache
+      - database
+      - search
+    env_file: .env
+
+  # define Meilisearch
+  search:
+    container_name: meilisearch
+    image: getmeili/meilisearch:v1.6.2
+    environment:
+      - http_proxy
+      - https_proxy
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-masterKey}
+      - MEILI_NO_ANALYTICS=${MEILI_NO_ANALYTICS:-true}
+      - MEILI_ENV=${MEILI_ENV:-development}
+      - MEILI_LOG_LEVEL
+      - MEILI_DB_PATH=${MEILI_DB_PATH:-/data.ms}
+    ports:
+      - ${MEILI_PORT:-7700}:7700
+    networks:
+      - hx-jaroen-stacks
+    volumes:
+      - ./data.ms:/data.ms
+    restart: unless-stopped
+    env_file: .env
+
+  search-ui:
+    container_name: meilisearch-ui
+    image: riccoxie/meilisearch-ui:latest
+    ports:
+      - ${MEILIUI_PORT:-24900}:24900
+    depends_on:
+      - search
+    restart: always
+    networks:
+      - hx-jaroen-stacks
+
+  proxy-manager:
+    image: "jc21/nginx-proxy-manager:latest"
+    restart: unless-stopped
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - "8080:80" # Public HTTP Port
+      - "4443:443" # Public HTTPS Port
+      - "8181:81" # Admin Web Port
+      # Add any other Stream port you want to expose
+      # - '21:21' # FTP
+    environment:
+      # Mysql/Maria connection parameters:
+      DB_MYSQL_HOST: "proxy-db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./proxy-manager/data:/data
+      - ./proxy-manager/letsencrypt:/etc/letsencrypt
+    networks:
+      - hx-jaroen-stacks
+    depends_on:
+      - proxy-db
+
+  proxy-db:
+    image: "jc21/mariadb-aria:latest"
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "npm"
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "npm"
+      MARIADB_AUTO_UPGRADE: "1"
+    volumes:
+      - ./proxy-db/mysql:/var/lib/mysql
+    networks:
+      - hx-jaroen-stacks
