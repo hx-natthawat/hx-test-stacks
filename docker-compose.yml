@@ -42,6 +42,8 @@ services:
   # define the custom directus service
   cms:
     container_name: directus
+    # Required when running on platform other than amd64, like Apple M1/M2:
+    # platform: linux/amd64
     # build the image from the Dockerfile in the current directory
     # ---
     build:
