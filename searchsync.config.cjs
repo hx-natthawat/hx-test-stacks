@@ -1,9 +1,8 @@
 module.exports = {
   server: {
     type: "meilisearch",
-    host: "http://localhost:7700",
-    // _host: "http://host.docker.internal:7700",
-    key: "a5ab9786f9310d07bf1b2cc16080bc53c0f893b98372b383ee347c266a199157",
+    host: "http://search:7700",
+    key: "d35677e8b7404a686e802d6965d1fd1f81f35f791aeb26c8052d80261a810176",
   },
   reindexOnStart: true,
   collections: {
