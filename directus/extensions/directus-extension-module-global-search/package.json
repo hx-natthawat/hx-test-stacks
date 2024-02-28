@@ -1,5 +1,5 @@
 {
-  "name": "directus-extension-global-search",
+  "name": "directus-extension-module-global-search",
   "version": "2.0.0",
   "keywords": [
     "directus",
@@ -10,11 +10,12 @@
     "type": "module",
     "path": "dist/index.js",
     "source": "src/index.ts",
-    "host": "^10.0.0"
+    "host": "^10.3.4"
   },
   "scripts": {
     "dev": "directus-extension build -w --no-minify",
-    "build": "directus-extension build"
+    "build": "directus-extension build",
+    "link": "directus-extension link"
   },
   "devDependencies": {
     "@directus/utils": "11.0.5",
