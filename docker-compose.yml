@@ -53,7 +53,7 @@ services:
     ports:
       - 8055:8055
     volumes:
-      - extensions:/directus/extensions
+      - extensions:/directus/extensions/
       - snapshots:/directus/snapshots
       - uploads:/directus/uploads
       - database:/directus/database

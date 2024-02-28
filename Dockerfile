@@ -1,4 +1,4 @@
-FROM directus/directus:10.9.2
+FROM directus/directus:10.9.3
 
 # Install git 
 # We need this part becaus "npm install" will fail without the git package.
@@ -18,6 +18,7 @@ USER node
 COPY searchsync.config.cjs ./ 
 RUN pnpm i moment uuid
 RUN pnpm i dimitrov-adrian/directus-extension-searchsync
+# RUN pnpm i D-Nuddhapong/directus-landing-page.git
 # RUN pnpm i hx-natthawat/directus-extension-global-search // Build Error
 # RUN pnpm i u12206050/directus-extension-global-search // Build Error
 # RUN pnpm i directus-extension-editorjs other-extensions
