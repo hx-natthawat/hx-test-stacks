@@ -1,4 +1,4 @@
-version: "3.8"
+# version: "3.8"
 
 # define the volumes that will be used by the services
 volumes:

@@ -1,4 +1,4 @@
-FROM directus/directus:10.9.3
+FROM directus/directus:11.1.0
 
 # Install git 
 # We need this part becaus "npm install" will fail without the git package.
