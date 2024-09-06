@@ -9,7 +9,7 @@ RUN apk add git --no-cache
 COPY ./directus/extensions /directus/extensions
 
 RUN corepack enable \
-  && corepack prepare pnpm@8.13.1 --activate
+  && corepack prepare pnpm@9.9.0 --activate
 
 USER node
 
