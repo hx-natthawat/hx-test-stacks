@@ -19,7 +19,7 @@ services:
   database:
     container_name: database
     # image: postgres:15-alpine
-    image: postgis/postgis:16-3.4
+    image: postgis/postgis:17beta3-master
     volumes:
       - data:/var/lib/postgresql/data
     networks:
@@ -68,7 +68,7 @@ services:
   # define Meilisearch
   search:
     container_name: meilisearch
-    image: getmeili/meilisearch:v1.6.2
+    image: getmeili/meilisearch:v1.10.1
     environment:
       - http_proxy
       - https_proxy
